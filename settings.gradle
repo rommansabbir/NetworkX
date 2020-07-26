@@ -1,0 +1,3 @@
+include ':app:NetworkX'
+include ':app'
+rootProject.name = "NetworkObserverExample"
