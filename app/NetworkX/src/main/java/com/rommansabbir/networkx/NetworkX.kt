@@ -100,15 +100,20 @@ class NetworkX private constructor() {
          * Execute all required executing under a [CoroutineDispatcher]
          *
          * @param context, [Application]
-         * @param strategy, [NetworkXObservingStrategy]
+         * @param delayStrategy, [NetworkXObservingStrategy]
+         * @param repeatStrategy, [RepeatStrategy]
          */
-        fun startObserving(context: Application, strategy: NetworkXObservingStrategy) {
+        fun startObserving(
+            context: Application,
+            delayStrategy: NetworkXObservingStrategy,
+            repeatStrategy: RepeatStrategy = RepeatStrategy.INFINITY
+        ) {
             val mInstance = NetworkX()
             this.mAppContext = context
             this.mCoroutineScope = Dispatchers.IO + Job()
             this.mCoroutineScope?.let {
                 CoroutineScope(it).launch {
-                    mInstance.startObserving(context, strategy)
+                    mInstance.startObserving(context, delayStrategy, repeatStrategy)
                 }
             }
         }
@@ -138,20 +143,34 @@ class NetworkX private constructor() {
      * Use recursive strategy to perform the same procedure again and again
      *
      * @param mContext, [Application]
-     * @param mStrategy, [NetworkXObservingStrategy]
+     * @param delayStrategy, [NetworkXObservingStrategy]
+     * @param repeatStrategy, [RepeatStrategy]
      */
-    suspend fun startObserving(mContext: Application, mStrategy: NetworkXObservingStrategy) {
+    suspend fun startObserving(
+        mContext: Application,
+        delayStrategy: NetworkXObservingStrategy,
+        repeatStrategy: RepeatStrategy
+    ) {
         val mTempValue = isNetworkAvailable(mContext)
         mNetworkStatusLiveData.postValue(mTempValue)
-        mNetworkStatus = mTempValue
-        when (mStrategy) {
-            is NetworkXObservingStrategy.LOW -> delay(STRATEGY_LOW)
-            is NetworkXObservingStrategy.MEDIUM -> delay(STRATEGY_MEDIUM)
-            is NetworkXObservingStrategy.HIGH -> delay(STRATEGY_HIGH)
-            is NetworkXObservingStrategy.REALTIME -> delay(STRATEGY_REALTIME)
-            is NetworkXObservingStrategy.CUSTOM -> delay(mStrategy.mInterval)
-        }
-        startObserving(mContext, mStrategy)
+
+        if (repeatStrategy != RepeatStrategy.ONCE) {
+            mNetworkStatus = mTempValue
+
+            if ((repeatStrategy == RepeatStrategy.CONNECTION && !mNetworkStatus) || (repeatStrategy == RepeatStrategy.DISCONNECTION && mNetworkStatus)) {
+                when (delayStrategy) {
+                    is NetworkXObservingStrategy.LOW -> delay(STRATEGY_LOW)
+                    is NetworkXObservingStrategy.MEDIUM -> delay(STRATEGY_MEDIUM)
+                    is NetworkXObservingStrategy.HIGH -> delay(STRATEGY_HIGH)
+                    is NetworkXObservingStrategy.REALTIME -> delay(STRATEGY_REALTIME)
+                    is NetworkXObservingStrategy.CUSTOM -> delay(delayStrategy.mInterval)
+                }
+                startObserving(mContext, delayStrategy, repeatStrategy)
+            } else
+                cancelObserving()
+        } else
+            cancelObserving()
+
     }
 
     /**
