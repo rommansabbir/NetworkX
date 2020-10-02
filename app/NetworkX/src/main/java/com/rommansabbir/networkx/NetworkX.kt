@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -52,7 +53,7 @@ class NetworkX private constructor() {
          * Wrap internet connected or not status into a [MutableLiveData] so that developer can observe
          * status in required fragment or activity
          */
-        private var mNetworkStatusLiveData: MutableLiveData<Boolean> = MutableLiveData(true)
+        private var mNetworkStatusLiveData = MutableLiveData<Boolean>()
 
         /**
          * To store internet is connected or not status
