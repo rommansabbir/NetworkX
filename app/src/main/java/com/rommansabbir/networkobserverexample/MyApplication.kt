@@ -1,17 +1,19 @@
 package com.rommansabbir.networkobserverexample
 
 import android.app.Application
-import com.rommansabbir.networkx.NetworkX
-import com.rommansabbir.networkx.NetworkXObservingStrategy
+import com.rommansabbir.networkx.core.NetworkX
+import com.rommansabbir.networkx.core.NetworkXCore
+import com.rommansabbir.networkx.strategy.NetworkXObservingStrategy
 
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
         /**
-         * To Start observing network status using [NetworkX] call [NetworkX.startObserving] from application [onCreate] method
+         * To Start observing network status using [NetworkX] call [NetworkXCore.init] from application [onCreate] method
          * Otherwise when try to check if device is connected to the internet or not it will throw an [Exception]
          * Provide [Application] reference & [NetworkXObservingStrategy] to [NetworkX]
+         *
          * [NetworkXObservingStrategy] represent delay time in internet connection status checking
          * Sates are:
          * [NetworkXObservingStrategy.LOW]
@@ -19,13 +21,13 @@ class MyApplication : Application() {
          * [NetworkXObservingStrategy.MEDIUM]
          * [NetworkXObservingStrategy.REALTIME]
          */
-        NetworkX.startObserving(this, NetworkXObservingStrategy.HIGH)
+        NetworkXCore.init(this, NetworkXObservingStrategy.MEDIUM)
 
 //        /**
 //         * Also you can provide custom time interval in millis
 //         * Custom State:
 //         * [NetworkXObservingStrategy.CUSTOM]
 //         */
-//        NetworkX.startObserving(this, NetworkXObservingStrategy.CUSTOM(15 * 1000))
+//        NetworkX.init(this, NetworkXObservingStrategy.CUSTOM(15 * 1000))
     }
 }

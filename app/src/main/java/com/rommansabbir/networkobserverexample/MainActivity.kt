@@ -1,119 +1,59 @@
 package com.rommansabbir.networkobserverexample
 
 import android.os.Bundle
-import android.util.Log
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import com.rommansabbir.networkx.NetworkX
+import com.rommansabbir.networkx.core.NetworkXCore
+import com.rommansabbir.networkx.dialog.NoInternetDialog
+import com.rommansabbir.networkx.strategy.NetworkXObservingStrategy
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        findViewById<Button>(R.id.button_cancel).setOnClickListener {
+            NetworkXCore.getNetworkX().cancelObservation()
+            showMessage("Canceled")
+        }
+        findViewById<Button>(R.id.button_restart).setOnClickListener {
+            NetworkXCore.getNetworkX().restartObservation()
+            showMessage("Restarted")
+        }
+        findViewById<Button>(R.id.button_change).setOnClickListener {
+            NetworkXCore.getNetworkX().updateStrategy(NetworkXObservingStrategy.HIGH)
+            showMessage("Strategy Updated")
+        }
+    }
 
+    private fun showMessage(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
     override fun onResume() {
         super.onResume()
+        NetworkXCore.getNetworkX().isInternetConnected()
 
-//        /**
-//         * To get status of internet connection for single time, use [NetworkX.isConnected] method to retrieve connection status
-//         */
-//        NetworkX.isConnected().let {
-//            when (it) {
-//                true -> {
-//                    /**
-//                     * Do your stuff here when internet is connected
-//                     */
-//                    Log.d("NetworkX", "Is internet connected: $it")
-//                }
-//                else -> {
-//                    /**
-//                     * Do your stuff here when internet is not connected
-//                     */
-//                    Log.d("NetworkX", "Is internet connected: $it")
-//                }
-//            }
-//        }
-//
-//        /**
-//         * Or you can use extension function
-//         */
-//        isInternetConnected().let {
-//            when (it) {
-//                true -> {
-//                    /**
-//                     * Do your stuff here when internet is connected
-//                     */
-//                    Log.d("NetworkX", "Is internet connected: $it")
-//                }
-//                else -> {
-//                    /**
-//                     * Do your stuff here when internet is not connected
-//                     */
-//                    Log.d("NetworkX", "Is internet connected: $it")
-//                }
-//            }
-//        }
-
-        /**
-         * To get status of internet connection in realtime, use [NetworkX.isConnectedLiveData] method to retrieve connection status
-         */
-        NetworkX.isConnectedLiveData().observe(
-            this,
-            Observer {
-                when (it) {
-                    true -> {
-                        /**
-                         * Do your stuff here when internet is connected
-                         */
-                        Log.d("NetworkX", "Is internet connected: $it")
-                        Toast.makeText(this, "Internet connected", Toast.LENGTH_SHORT).show()
-                    }
-                    else -> {
-                        /**
-                         * Do your stuff here when internet is not connected
-                         */
-                        Log.d("NetworkX", "Is internet connected: $it")
-                        Toast.makeText(this, "Internet not connected", Toast.LENGTH_SHORT).show()
+        NetworkXCore.getNetworkX().isInternetConnectedLiveData().observe(
+            this
+        ) {
+            it?.let {
+                if (!it) {
+                    if (!NoInternetDialog.isDialogVisible()) {
+                        NoInternetDialog
+                            .Companion
+                            .Builder()
+                            .withActivity(this)
+                            .withTitle("No internet!")
+                            .withMessage("Your device is not connected to the internet!")
+                            .withActionCallback {
+                                // User clicked `Retry` button
+                            }
+                            .build()
+                            .show()
                     }
                 }
             }
-        )
-
-//        /**
-//         * Or you can use extension function
-//         */
-//        isInternetConnectedLiveData().observe(this, Observer {
-//            when (it) {
-//                true -> {
-//                    /**
-//                     * Do your stuff here when internet is connected
-//                     */
-//                    Log.d("NetworkX", "Is internet connected: $it")
-//                }
-//                else -> {
-//                    /**
-//                     * Do your stuff here when internet is not connected
-//                     */
-//                    Log.d("NetworkX", "Is internet connected: $it")
-//                }
-//            }
-//        })
-    }
-
-    override fun onStop() {
-//        /**
-//         * If you want to cancel the observing internet is connected status, use [NetworkX.cancelObserving] method
-//         */
-//        NetworkX.cancelObserving()
-//
-//        /**
-//         * Or you can use extension function
-//         */
-//        cancelObservingIsInternetConnected()
-
-        super.onStop()
+        }
     }
 }
