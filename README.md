@@ -54,7 +54,7 @@ Step 2. Add the dependency.
 
 | Releases
 | ------------- |
-| 2.0.0         |
+| 2.1.0         |
 
 ### What's new in this version?
 
@@ -75,10 +75,10 @@ Provide `Application` reference & `NetworkXObservingStrategy` to `NetworkX` .
 `NetworkXObservingStrategy` represent delay time in internet connection status checking
 Sates are:
 
-* `NetworkXObservingStrategy.LOW`
-* `NetworkXObservingStrategy.MEDIUM`
-* `NetworkXObservingStrategy.HIGH`
-* `NetworkXObservingStrategy.REALTIME`
+* `NetworkXObservingStrategy.LOW` (15 * 1000) (Millis)
+* `NetworkXObservingStrategy.MEDIUM` (10 * 1000) (Millis)
+* `NetworkXObservingStrategy.HIGH` (3 * 1000) (Millis)
+* `NetworkXObservingStrategy.REALTIME` (1 * 1000) (Millis)
 
 ```kotlin
     override fun onCreate() {

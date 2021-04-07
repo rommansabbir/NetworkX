@@ -30,9 +30,14 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
+    private fun isCanceled() {
+        showMessage("Is Canceled: ${NetworkXCore.getNetworkX().isCanceled()}")
+    }
+
     override fun onResume() {
         super.onResume()
         NetworkXCore.getNetworkX().isInternetConnected()
+        isCanceled()
 
         NetworkXCore.getNetworkX().isInternetConnectedLiveData().observe(
             this

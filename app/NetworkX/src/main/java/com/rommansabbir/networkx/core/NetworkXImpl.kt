@@ -81,6 +81,10 @@ class NetworkXImpl(
         }
     }
 
+    override fun isCanceled(): Boolean {
+        return ioScope == null && mainScope == null
+    }
+
     /**
      * Start observing network status by calling [isNetworkAvailable] method
      * which return the internet connection status.

@@ -34,4 +34,9 @@ interface NetworkX {
      * @param strategy, [NetworkXObservingStrategy]
      */
     fun updateStrategy(strategy: NetworkXObservingStrategy)
+
+    /**
+     * Check if the observation is canceled or not
+     */
+    fun isCanceled(): Boolean
 }
