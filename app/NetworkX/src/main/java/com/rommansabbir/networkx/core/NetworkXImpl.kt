@@ -49,7 +49,7 @@ class NetworkXImpl(
 
     private var isInternetConnected: Boolean = false
     private var isInternetConnectedLiveData: MutableLiveData<Boolean> =
-        MutableLiveData()
+        MutableLiveData(false)
 
     override fun isInternetConnected(): Boolean = isInternetConnected
 
@@ -96,7 +96,7 @@ class NetworkXImpl(
      * Developer can provide custom delay to this observation
      * Use recursive strategy to perform the same procedure again and again
      */
-    suspend fun startObserving(strategy: NetworkXObservingStrategy) {
+    private suspend fun startObserving(strategy: NetworkXObservingStrategy) {
         if (ioScope != null && mainScope != null) {
             val temp = isNetworkAvailable(application)
             mainScope?.launch {
@@ -128,28 +128,32 @@ class NetworkXImpl(
     private fun isNetworkAvailable(
         context: Context
     ): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val capabilities =
-                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-            if (capabilities != null) {
-                when {
-                    capabilities.hasTransport(
-                        NetworkCapabilities.TRANSPORT_CELLULAR
-                    ) -> return true
-                    capabilities.hasTransport(
-                        NetworkCapabilities.TRANSPORT_WIFI
-                    ) -> return true
-                    capabilities.hasTransport(
-                        NetworkCapabilities.TRANSPORT_ETHERNET
-                    ) -> return true
+        try {
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val capabilities =
+                    connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+                if (capabilities != null) {
+                    when {
+                        capabilities.hasTransport(
+                            NetworkCapabilities.TRANSPORT_CELLULAR
+                        ) -> return true
+                        capabilities.hasTransport(
+                            NetworkCapabilities.TRANSPORT_WIFI
+                        ) -> return true
+                        capabilities.hasTransport(
+                            NetworkCapabilities.TRANSPORT_ETHERNET
+                        ) -> return true
+                    }
                 }
+            } else {
+                return connectivityManager.activeNetworkInfo != null &&
+                        connectivityManager.activeNetworkInfo!!.isConnected
             }
-        } else {
-            return connectivityManager.activeNetworkInfo != null &&
-                    connectivityManager.activeNetworkInfo!!.isConnected
+            return false
+        } catch (e: Exception) {
+            return false
         }
-        return false
     }
 }
