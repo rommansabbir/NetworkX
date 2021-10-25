@@ -1,3 +1,3 @@
-include ':app:NetworkX'
+include ':NetworkX'
 include ':app'
 rootProject.name = "NetworkObserverExample"
