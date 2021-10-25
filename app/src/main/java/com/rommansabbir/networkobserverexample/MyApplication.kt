@@ -1,6 +1,7 @@
 package com.rommansabbir.networkobserverexample
 
 import android.app.Application
+import com.rommansabbir.networkx.NetworkXProvider
 import com.rommansabbir.networkx.core.NetworkX
 import com.rommansabbir.networkx.core.NetworkXCore
 import com.rommansabbir.networkx.strategy.NetworkXObservingStrategy
@@ -8,6 +9,8 @@ import com.rommansabbir.networkx.strategy.NetworkXObservingStrategy
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+
+        NetworkXProvider.init(this)
 
         /**
          * To Start observing network status using [NetworkX] call [NetworkXCore.init] from application [onCreate] method
@@ -21,7 +24,7 @@ class MyApplication : Application() {
          * [NetworkXObservingStrategy.MEDIUM]
          * [NetworkXObservingStrategy.REALTIME]
          */
-        NetworkXCore.init(this, NetworkXObservingStrategy.MEDIUM)
+//        NetworkXCore.init(this, NetworkXObservingStrategy.MEDIUM)
 
 //        /**
 //         * Also you can provide custom time interval in millis

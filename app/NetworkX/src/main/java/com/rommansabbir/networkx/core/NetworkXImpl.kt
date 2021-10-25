@@ -11,6 +11,7 @@ import com.rommansabbir.networkx.exceptions.NetworkXUpdateStrategyException
 import com.rommansabbir.networkx.strategy.NetworkXObservingStrategy
 import kotlinx.coroutines.*
 
+@Deprecated("Deprecated. Use NetworkXProvider instead")
 class NetworkXImpl(
     private val application: Application,
     private val initStrategy: NetworkXObservingStrategy
