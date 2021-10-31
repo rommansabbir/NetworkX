@@ -34,7 +34,7 @@ Step 2. Add the dependency.
 
 | Releases
 | ------------- |
-| 3.0.0         |
+| 3.1.0         |
 
 
 # Usages
