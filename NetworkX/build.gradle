@@ -1,9 +1,11 @@
-apply plugin: 'com.android.library'
+plugins {
+    id("com.android.library")
+    id("maven-publish")
+}
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.github.dcendents.android-maven'
 group = 'rommansabbir'
-version '1.0'
+version '3.0.0'
 
 android {
     compileSdkVersion 31
@@ -29,11 +31,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_11
     }
 }
 
@@ -50,4 +52,18 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     kaptAndroidTest 'androidx.databinding:databinding-compiler:7.0.3'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+// Creates a Maven publication called "release".
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.rommansabbir'
+                artifactId = 'NetworkX'
+                version = '3.0.0'
+            }
+        }
+    }
 }
