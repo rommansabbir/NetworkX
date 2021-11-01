@@ -9,6 +9,9 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 
 internal class NetworkXManager constructor(private val application: Application) {
     // Callback for activity lifecycle for this specific application
@@ -24,12 +27,12 @@ internal class NetworkXManager constructor(private val application: Application)
                         getNetworkRequest(),
                         getNetworkCallBack
                     )
+
                     when (getConnectionType(activity)) {
                         0 -> {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
-                            }
-                            else{
+                            } else {
 //                                getNetworkCapabilities(activeNetwork)
                             }
                         }
@@ -114,6 +117,19 @@ internal class NetworkXManager constructor(private val application: Application)
         }
     }
 
+    private val mInterval = 1000
+    private var mHandler: Handler? = null
+
+
+    private val runnableCode: Runnable = object : Runnable {
+        override fun run() {
+            val speed = TrafficUtils.getNetworkSpeed()
+            logThis("Internet speed: $speed")
+            mHandler?.postDelayed(this, mInterval.toLong())
+        }
+    }
+
+
     // Get ConnectivityManager which is a system service
     private fun getConnectivityManager(application: Application) =
         application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -133,12 +149,41 @@ internal class NetworkXManager constructor(private val application: Application)
     private val getNetworkCallBack = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
-            NetworkXProvider.setConnection(true)
+            try {
+                NetworkXProvider.setConnection(true)
+                if (mHandler != null) {
+                    mHandler!!.removeCallbacks(runnableCode)
+                    mHandler = null
+                    logThis("Callback removed, Handler instance is null")
+                }
+                mHandler = Handler(Looper.getMainLooper())
+                mHandler!!.post(runnableCode)
+                logThis("OnNetwork Update - Callback added with Handler new instance")
+            }
+            catch (e : Exception){
+                e.printStackTrace()
+                logThis(e.message)
+            }
         }
 
         override fun onLost(network: Network) {
             super.onLost(network)
-            NetworkXProvider.setConnection(false)
+            try {
+                NetworkXProvider.setConnection(false)
+                if (mHandler != null) {
+                    mHandler!!.removeCallbacks(runnableCode)
+                    mHandler = null
+                    logThis("Callback removed, Handler instance is null")
+                }
+            }
+            catch (e : Exception){
+                e.printStackTrace()
+                logThis(e.message)
+            }
         }
+    }
+
+    private fun logThis(log : String?){
+        Log.d("NetworkX:", log ?: "Something went wrong")
     }
 }

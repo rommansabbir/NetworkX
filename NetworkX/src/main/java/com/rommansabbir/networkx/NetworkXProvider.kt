@@ -48,6 +48,10 @@ object NetworkXProvider {
         get() = isInternetConnectedMutableLiveData
 
 
+    var currentNetworkSpeed : String = ""
+    var currentNetworkSpeedLiveData : MutableLiveData<String> = MutableLiveData("")
+
+
     /**
      * Main entry point for the client.
      * First check for [NetworkXManager] instance, if the status is null then initialize it properly
