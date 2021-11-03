@@ -1,6 +1,7 @@
 package com.rommansabbir.networkobserverexample
 
 import android.app.Application
+import com.rommansabbir.networkx.NetworkXConfig
 import com.rommansabbir.networkx.NetworkXProvider
 import com.rommansabbir.networkx.core.NetworkX
 import com.rommansabbir.networkx.core.NetworkXCore
@@ -10,7 +11,10 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        NetworkXProvider.init(this)
+//        NetworkXProvider.init(this, true)
+        NetworkXProvider.enable(
+            NetworkXConfig.Builder().withApplication(this).withEnableSpeedMeter(true).build()
+        )
 
         /**
          * To Start observing network status using [NetworkX] call [NetworkXCore.init] from application [onCreate] method

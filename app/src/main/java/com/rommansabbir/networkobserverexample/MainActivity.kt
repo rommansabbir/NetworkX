@@ -18,6 +18,14 @@ class MainActivity : AppCompatActivity() {
                 textView.text = "Internet connection status: $it"
             }
         }
+
+        NetworkXProvider.lastKnownSpeedLiveData.observe(this) {
+            it?.let {
+                textView2.text =
+                    "Last Known Speed: Speed - ${it.speed} | Type - ${it.networkTypeNetwork} | Simplified Speed - ${it.simplifiedSpeed}"
+            }
+        }
+
     }
 
 }
