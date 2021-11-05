@@ -48,6 +48,30 @@ object NetworkXProvider {
         get() = isInternetConnectedMutableLiveData
 
 
+    // Store last known speed
+    private var lastKnownSpeedRef: LastKnownSpeed? = null
+
+    /**
+     * Public access point to get the last known network speed
+     */
+    val lastKnownSpeed: LastKnownSpeed?
+        get() = lastKnownSpeedRef
+
+    private val lastKnownSpeedLiveDataRef: MutableLiveData<LastKnownSpeed> = MutableLiveData(null)
+
+    /**
+     * Public access point to get the last known network speed which can be observed from Activity/Fragment.
+     */
+    val lastKnownSpeedLiveData: LiveData<LastKnownSpeed>
+        get() = lastKnownSpeedLiveDataRef
+
+    fun setNetworkSpeed(value: LastKnownSpeed) {
+        synchronized(value) {
+            lastKnownSpeedRef = value
+            lastKnownSpeedLiveDataRef.value = value
+        }
+    }
+
     /**
      * Main entry point for the client.
      * First check for [NetworkXManager] instance, if the status is null then initialize it properly
@@ -55,12 +79,31 @@ object NetworkXProvider {
      *
      * @param application, [Application] reference
      */
-    fun init(application: Application) {
+    @Deprecated("Use NetworkXProvider.enable(config: NetworkXConfig) to initialize NetworkX properly")
+    fun init(application: Application, enableSpeedMeter: Boolean = false) {
         try {
             if (manager != null) {
                 return
             }
-            manager = NetworkXManager(application)
+            manager = NetworkXManager(application, enableSpeedMeter)
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    /**
+     * Main entry point for the client.
+     * First check for [NetworkXManager] instance, if the status is null then initialize it properly
+     * else ignore the initialization.
+     *
+     * @param config, [NetworkXConfig] reference
+     */
+    fun enable(config: NetworkXConfig) {
+        try {
+            if (manager != null) {
+                return
+            }
+            manager = NetworkXManager(config.application, config.enableSpeedMeter)
         } catch (e: Exception) {
             throw e
         }
