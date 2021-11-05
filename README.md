@@ -34,22 +34,65 @@ Step 2. Add the dependency.
 
 | Releases
 | ------------- |
-| 3.1.0         |
+| 3.3.0         |
 
 
 # Usages
 
 ## Step 1:
-Initialize `NetworkX` from your `Application.onCreate()` method by calling `NetworkXProvider.init()` which take `Application` reference as the param.
+Initialize `NetworkX` from your `Application.onCreate()`
+````
+    val builder = NetworkXConfig.Builder()
+        .withApplication(this)
+        // You can disable speed meter if not required
+        .withEnableSpeedMeter(true)
+        .build()
+    NetworkXProvider.enable(builder)
+````
 
 ## Step 2:
 - To check internet connection status, simply call `NetworkXProvider.isInternetConnected` which return a `Boolean` value.
+````
+    val status = NetworkXProvider.isInternetConnected
+    textView.text = "Internet connection status: $status"
+````
 
 - To observe the internet connection status, start observing `NetworkXProvider.isInternetConnectedLiveData`
 
- ## Note:
+````
+    NetworkXProvider.isInternetConnectedLiveData.observe(this) { status ->
+        status?.let {
+            textView.text = "Internet connection status: $it"
+        }
+    }
+````
+
+- To get connected network speed/last known speed call `NetworkXProvider.lastKnownSpeed` which return an `LastKnownSpeed` object
+
+````
+    NetworkXProvider.lastKnownSpeed?.let {
+        textView2.text =
+            "Last Known Speed: Speed - ${it.speed} | Type - ${it.networkTypeNetwork} | Simplified Speed - ${it.simplifiedSpeed}"
+    }
+````
+
+- To obsever current network speed/last known speed start observing `NetworkXProvider.lastKnownSpeedLiveData`
+
+````
+    NetworkXProvider.lastKnownSpeedLiveData.observe(this) {
+        it?.let {
+            textView2.text =
+                "Last Known Speed: Speed - ${it.speed} | Type - ${it.networkTypeNetwork} | Simplified Speed - ${it.simplifiedSpeed}"
+        }
+    }
+````
+
+ ## Notes:
+ - NetworkX (including Speed Meter) only works when the app is in the foreground
  - The default value for `NetworkXProvider.isInternetConnected` is `false`
  - The default value for `NetworkXProvider.isInternetConnectedLiveData` is `null`
+ - The default value for `NetworkXProvider.lastKnownSpeed` is `null`
+ - The default value for `NetworkXProvider.lastKnownSpeedLiveData` is `null`
 
 ---
 

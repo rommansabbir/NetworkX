@@ -12,11 +12,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val status = NetworkXProvider.isInternetConnected
+        textView.text = "Internet connection status: $status"
+
         //
-        NetworkXProvider.isInternetConnectedLiveData.observe(this) {
-            it?.let {
+        NetworkXProvider.isInternetConnectedLiveData.observe(this) { status ->
+            status?.let {
                 textView.text = "Internet connection status: $it"
             }
+        }
+
+        NetworkXProvider.lastKnownSpeed?.let {
+            textView2.text =
+                "Last Known Speed: Speed - ${it.speed} | Type - ${it.networkTypeNetwork} | Simplified Speed - ${it.simplifiedSpeed}"
         }
 
         NetworkXProvider.lastKnownSpeedLiveData.observe(this) {
