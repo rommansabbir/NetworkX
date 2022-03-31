@@ -11,13 +11,13 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-//        NetworkXProvider.init(this, true)
+        /*NetworkXProvider.init(this, true)*/
         /**
          * Initialize NetworkX
          */
-        val builder = NetworkXConfig.Builder()
+        val builder = NetworkXConfig
+            .Builder()
             .withApplication(this)
-            // You can disable speed meter if not required
             .withEnableSpeedMeter(true)
             .build()
         NetworkXProvider.enable(builder)
