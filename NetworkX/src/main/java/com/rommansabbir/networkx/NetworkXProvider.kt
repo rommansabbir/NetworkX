@@ -5,6 +5,11 @@ import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.rommansabbir.networkx.extension.getDefaultIOScope
+import com.rommansabbir.networkx.extension.getDefaultLastKnownSpeed
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 object NetworkXProvider {
     /**
@@ -29,6 +34,9 @@ object NetworkXProvider {
             Handler(Looper.getMainLooper()).post {
                 connected = value
                 isInternetConnectedMutableLiveData.value = value
+                getDefaultIOScope.launch {
+                    isInternetConnectedFlow.emit(value)
+                }
             }
         }
     }
@@ -44,20 +52,27 @@ object NetworkXProvider {
      */
     private var isInternetConnectedMutableLiveData: MutableLiveData<Boolean> =
         MutableLiveData()
+
     val isInternetConnectedLiveData: LiveData<Boolean>
         get() = isInternetConnectedMutableLiveData
 
+    val isInternetConnectedFlow: MutableStateFlow<Boolean> = MutableStateFlow(connected)
+
 
     // Store last known speed
-    private var lastKnownSpeedRef: LastKnownSpeed? = null
+    private var lastKnownSpeedRef: LastKnownSpeed = getDefaultLastKnownSpeed
 
     /**
      * Public access point to get the last known network speed
      */
-    val lastKnownSpeed: LastKnownSpeed?
+    val lastKnownSpeed: LastKnownSpeed
         get() = lastKnownSpeedRef
 
-    private val lastKnownSpeedLiveDataRef: MutableLiveData<LastKnownSpeed> = MutableLiveData(null)
+    private val lastKnownSpeedLiveDataRef: MutableLiveData<LastKnownSpeed> =
+        MutableLiveData(getDefaultLastKnownSpeed)
+
+    val lastKnownSpeedFlow: MutableStateFlow<LastKnownSpeed> =
+        MutableStateFlow(getDefaultLastKnownSpeed)
 
     /**
      * Public access point to get the last known network speed which can be observed from Activity/Fragment.
@@ -69,6 +84,9 @@ object NetworkXProvider {
         synchronized(value) {
             lastKnownSpeedRef = value
             lastKnownSpeedLiveDataRef.value = value
+            getDefaultIOScope.launch {
+                lastKnownSpeedFlow.emit(value)
+            }
         }
     }
 
@@ -79,7 +97,10 @@ object NetworkXProvider {
      *
      * @param application, [Application] reference
      */
-    @Deprecated("Use NetworkXProvider.enable(config: NetworkXConfig) to initialize NetworkX properly")
+    @Deprecated(
+        "Use NetworkXProvider.enable(config: NetworkXConfig) to initialize NetworkX properly",
+        replaceWith = ReplaceWith("NetworkXProvider.enable(NetworkXConfig.Builder().withApplication(this).withEnableSpeedMeter(true).build())")
+    )
     fun init(application: Application, enableSpeedMeter: Boolean = false) {
         try {
             if (manager != null) {
@@ -96,7 +117,7 @@ object NetworkXProvider {
      * First check for [NetworkXManager] instance, if the status is null then initialize it properly
      * else ignore the initialization.
      *
-     * @param config, [NetworkXConfig] reference
+     * @param config [NetworkXConfig] reference.
      */
     fun enable(config: NetworkXConfig) {
         try {

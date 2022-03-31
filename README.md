@@ -34,7 +34,7 @@ Step 2. Add the dependency.
 
 | Releases
 | ------------- |
-| 3.3.0         |
+| 3.4.0         |
 
 
 # Usages
@@ -51,52 +51,34 @@ Initialize `NetworkX` from your `Application.onCreate()`
 ````
 
 ## Step 2:
-- To check internet connection status, simply call `NetworkXProvider.isInternetConnected` which return a `Boolean` value.
+- To check Internet Connection status, simply call extension variable
+`isInternetConnected` or `isInternetConnectedLiveData` or `isInternetConnectedFlow`.
 ````
-    val status = NetworkXProvider.isInternetConnected
-    textView.text = "Internet connection status: $status"
-````
-
-- To observe the internet connection status, start observing `NetworkXProvider.isInternetConnectedLiveData`
-
-````
-    NetworkXProvider.isInternetConnectedLiveData.observe(this) { status ->
-        status?.let {
+isInternetConnectedFlow.collectLatest {
+    lifecycleScope.launch {
             textView.text = "Internet connection status: $it"
         }
     }
 ````
 
-- To get connected network speed/last known speed call `NetworkXProvider.lastKnownSpeed` which return an `LastKnownSpeed` object
+- To get connected network speed/last known speed [`LastKnownSpeed`] call extension variable
+`lastKnownSpeed` or `lastKnownSpeedLiveData` or `lastKnownSpeedFlow`
 
 ````
-    NetworkXProvider.lastKnownSpeed?.let {
-        textView2.text =
-            "Last Known Speed: Speed - ${it.speed} | Type - ${it.networkTypeNetwork} | Simplified Speed - ${it.simplifiedSpeed}"
-    }
-````
-
-- To obsever current network speed/last known speed start observing `NetworkXProvider.lastKnownSpeedLiveData`
-
-````
-    NetworkXProvider.lastKnownSpeedLiveData.observe(this) {
-        it?.let {
-            textView2.text =
-                "Last Known Speed: Speed - ${it.speed} | Type - ${it.networkTypeNetwork} | Simplified Speed - ${it.simplifiedSpeed}"
-        }
-    }
+lastKnownSpeed?.let {
+    textView2.text ="S-${it.speed}|T-${it.networkTypeNetwork}|SS-${it.simplifiedSpeed}"
+}
 ````
 
  ## Notes:
- - NetworkX (including Speed Meter) only works when the app is in the foreground
- - The default value for `NetworkXProvider.isInternetConnected` is `false`
- - The default value for `NetworkXProvider.isInternetConnectedLiveData` is `null`
- - The default value for `NetworkXProvider.lastKnownSpeed` is `null`
- - The default value for `NetworkXProvider.lastKnownSpeedLiveData` is `null`
+ - **NetworkX** (including **Speed Meter**) only works when the **Application** is in the **Forground Only**.
+ - To emit (**`MutableStateFlow`**) **Last Known Speed** or **Internet Connection Status**,required **`CoroutineScope`** works under a **`Dispatchers.IO`** context.
+ - The default value for **Internet Connection Status** is `false`.
+ - The default value for **LastKnownSpeed** is `NONE`.
 
 ---
 
-### How to show the `NoInternetDialog`?
+### How to show the **`NoInternetDialog`**?
 
 ```kotlin
     NoInternetDialog
