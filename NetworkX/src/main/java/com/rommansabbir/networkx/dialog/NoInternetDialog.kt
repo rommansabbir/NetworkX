@@ -7,6 +7,7 @@ import com.rommansabbir.networkx.exceptions.NoInternetDialogException
 import com.rommansabbir.networkx.extension.getDialogInstance
 import java.lang.ref.WeakReference
 
+@Deprecated("Use new API - NoInternetDialogV2")
 class NoInternetDialog private constructor(private var builder: Builder) {
     companion object {
         private var isDialogVisible: Boolean = false
@@ -16,6 +17,13 @@ class NoInternetDialog private constructor(private var builder: Builder) {
          *
          * @return [Boolean]
          */
+        @Deprecated(
+            "Use NoInternetDialogV2",
+            ReplaceWith(
+                "NoInternetDialogV2.isVisible",
+                imports = arrayOf("com.rommansabbir.networkx.dialog.NoInternetDialogV2")
+            )
+        )
         fun isDialogVisible(): Boolean = isDialogVisible
 
         class Builder {

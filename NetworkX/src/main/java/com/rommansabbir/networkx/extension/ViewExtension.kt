@@ -30,6 +30,6 @@ inline fun <V : ViewDataBinding> getDialogInstance(
     dialog.setContentView(layout.root)
     dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     dialog.setCanceledOnTouchOutside(setCancelable)
-    dialog.setCancelable(false)
+    dialog.setCancelable(setCancelable)
     onSuccess.invoke(dialog, layout)
 }

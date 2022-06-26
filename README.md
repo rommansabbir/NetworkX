@@ -34,7 +34,7 @@ Step 2. Add the dependency.
 
 | Releases
 | ------------- |
-| 3.4.0         |
+| 3.4.1         |
 
 
 # Usages
@@ -78,27 +78,19 @@ lastKnownSpeed?.let {
 
 ---
 
-### How to show the **`NoInternetDialog`**?
+### How to show the **`NoInternetDialogV2`**?
 
 ```kotlin
-    NoInternetDialog
-        .Companion
-        .Builder()
-        // Provide activity reference
-        .withActivity(this)
-        // Provide custom title
-        .withTitle("No internet!")
-        // Provide custom mesage
-        .withMessage("Your device is not connected to the internet!")
-        // Register for callback
-        .withActionCallback {
-            // User clicked `Retry` button
-        }
-        .build()
-        .show()
+NoInternetDialogV2(
+    activity = WeakReference(this@MainActivity),
+    title = "No Internet Bro",
+    message = "This is just a dummy message",
+    buttonTitle = "Okay",
+    isCancelable = true
+) { /* Button Presses */ }
 ```
 
-* Also, you can determine if the `NoInternetDialog` is currently visible or not by calling this method `NoInternetDialog.isDialogVisible()` which return an `Boolean`.
+* Also, you can determine if the `NoInternetDialogV2` is currently visible or not by calling this variable `NoInternetDialogV2.isVisible` which return an `Boolean`.
 
 ---
 
