@@ -30,7 +30,7 @@ object NetworkXProvider {
      * @param value, new connection status
      */
     internal fun setConnection(value: Boolean) {
-        synchronized(value) {
+        synchronized(Any()) {
             Handler(Looper.getMainLooper()).post {
                 connected = value
                 isInternetConnectedMutableLiveData.value = value

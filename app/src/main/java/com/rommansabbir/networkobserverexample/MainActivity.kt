@@ -2,14 +2,18 @@ package com.rommansabbir.networkobserverexample
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.rommansabbir.networkx.NetworkXProvider
 import com.rommansabbir.networkx.NetworkXProvider.isInternetConnectedFlow
 import com.rommansabbir.networkx.NetworkXProvider.lastKnownSpeedFlow
+import com.rommansabbir.networkx.dialog.NoInternetDialogV2
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
@@ -20,12 +24,12 @@ class MainActivity : AppCompatActivity() {
         val status = NetworkXProvider.isInternetConnected
         textView.text = "Internet connection status: $status"
 
-/*        //
-        NetworkXProvider.isInternetConnectedLiveData.observe(this) { status ->
-            status?.let {
+        //
+        NetworkXProvider.isInternetConnectedLiveData.observe(this) {
+            it?.let {
                 textView.text = "Internet connection status: $it"
             }
-        }*/
+        }
 
 /*        NetworkXProvider.lastKnownSpeed.let {
             textView2.text =
@@ -51,27 +55,28 @@ class MainActivity : AppCompatActivity() {
                         textView.text = "Internet connection status: $it"
                     }
                 }
-            }
-            catch (e : Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-/*
-        NetworkXProvider.lastKnownSpeedLiveData.observe(this) {
-            it?.let {
-                textView2.text =
-                    "Last Known Speed: Speed - ${it.speed} | Type - ${it.networkTypeNetwork} | Simplified Speed - ${it.simplifiedSpeed}"
-            }
-        }
-*/
 
-/*        lifecycleScope.launchWhenCreated {
-            NetworkXProvider.isInternetConnectedFlow.collectLatest {
-                lifecycleScope.launch {
-                    textView.text = "Internet connection status: $it"
+        lifecycleScope.launch {
+            delay(5000)
+            if (!NoInternetDialogV2.isVisible) {
+                NoInternetDialogV2(
+                    activity = WeakReference(this@MainActivity),
+                    title = "No Internet Bro",
+                    message = "This is just a dummy message",
+                    buttonTitle = "Okay",
+                    isCancelable = true
+                ) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Is dialog cancelled? : ${!NoInternetDialogV2.isVisible}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
-        }*/
-
+        }
     }
 }
