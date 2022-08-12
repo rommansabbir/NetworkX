@@ -34,7 +34,7 @@ Step 2. Add the dependency.
 
 | Releases
 | ------------- |
-| 3.4.1         |
+| 4.0.0         |
 
 
 # Usages
@@ -71,7 +71,7 @@ lastKnownSpeed?.let {
 ````
 
  ## Notes:
- - **NetworkX** (including **Speed Meter**) only works when the **Application** is in the **Forground Only**.
+ - **NetworkX** (including **Speed Meter**) only works when the **Activity** is in state between **OnCreate()**  to **onDestroy()**.
  - To emit (**`MutableStateFlow`**) **Last Known Speed** or **Internet Connection Status**,required **`CoroutineScope`** works under a **`Dispatchers.IO`** context.
  - The default value for **Internet Connection Status** is `false`.
  - The default value for **LastKnownSpeed** is `NONE`.
