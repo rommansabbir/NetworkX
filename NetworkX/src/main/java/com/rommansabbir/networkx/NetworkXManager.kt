@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import java.net.InetAddress
 
 internal class NetworkXManager constructor(
     private val application: Application,
@@ -18,11 +19,7 @@ internal class NetworkXManager constructor(
 ) {
     // Callback for activity lifecycle for this specific application
     private val activityCallback = object : Application.ActivityLifecycleCallbacks {
-        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
-
-        override fun onActivityStarted(activity: Activity) {}
-
-        override fun onActivityResumed(activity: Activity) {
+        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             try {
                 getConnectivityManager(application).apply {
                     registerNetworkCallback(
@@ -31,9 +28,9 @@ internal class NetworkXManager constructor(
                     )
                     if (isSpeedMeterEnabled) {
                         enabledSpeedMeter()
-                        logThis("onActivityResumed: speed meter enabled")
+                        logThis("onActivityCreated: speed meter enabled")
                     }
-                    logThis("onActivityResumed: listener registered")
+                    logThis("onActivityCreated: listener registered")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -41,25 +38,29 @@ internal class NetworkXManager constructor(
             }
         }
 
-        override fun onActivityPaused(activity: Activity) {
-            try {
-                getConnectivityManager(application).unregisterNetworkCallback(getNetworkCallBack)
-                logThis("onActivityPaused: listener unregistered")
-                if (isSpeedMeterEnabled) {
-                    disableSpeedMeter()
-                    logThis("onActivityResumed: speed meter disabled")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                logThis(e.message)
-            }
-        }
+        override fun onActivityStarted(activity: Activity) {}
+
+        override fun onActivityResumed(activity: Activity) {}
+
+        override fun onActivityPaused(activity: Activity) {}
 
         override fun onActivityStopped(activity: Activity) {}
 
         override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
 
-        override fun onActivityDestroyed(activity: Activity) {}
+        override fun onActivityDestroyed(activity: Activity) {
+            try {
+                getConnectivityManager(application).unregisterNetworkCallback(getNetworkCallBack)
+                logThis("onActivityDestroyed: listener unregistered")
+                if (isSpeedMeterEnabled) {
+                    disableSpeedMeter()
+                    logThis("onActivityDestroyed: speed meter disabled")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                logThis(e.message)
+            }
+        }
 
     }
 
@@ -114,11 +115,28 @@ internal class NetworkXManager constructor(
             .build()
     }
 
+    private fun isInternetAvailable(): Boolean {
+        return try {
+            return !InetAddress.getByName("google.com").equals("")
+        } catch (e: java.lang.Exception) {
+            false
+        }
+    }
+
+    private fun updateInternetConnectionStatus() {
+        try {
+            NetworkXProvider.setConnection(isInternetAvailable())
+        } catch (e: Exception) {
+            NetworkXProvider.setConnection(false)
+        }
+    }
+
     // Callback to get notified about network availability
     private val getNetworkCallBack = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
-            NetworkXProvider.setConnection(true)
+            /*NetworkXProvider.setConnection(true)*/
+            updateInternetConnectionStatus()
         }
 
         override fun onLost(network: Network) {
