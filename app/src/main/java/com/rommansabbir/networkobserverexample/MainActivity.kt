@@ -53,6 +53,23 @@ class MainActivity : AppCompatActivity() {
                 isInternetConnectedFlow.collect {
                     lifecycleScope.launch {
                         textView.text = "Internet connection status: $it"
+                        if (!it){
+                            if (!NoInternetDialogV2.isVisible) {
+                                NoInternetDialogV2(
+                                    activity = WeakReference(this@MainActivity),
+                                    title = "No Internet Bro",
+                                    message = "This is just a dummy message",
+                                    buttonTitle = "Okay",
+                                    isCancelable = false
+                                ) {
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        "Is dialog cancelled? : ${!NoInternetDialogV2.isVisible}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -60,23 +77,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        lifecycleScope.launch {
-            delay(5000)
-            if (!NoInternetDialogV2.isVisible) {
-                NoInternetDialogV2(
-                    activity = WeakReference(this@MainActivity),
-                    title = "No Internet Bro",
-                    message = "This is just a dummy message",
-                    buttonTitle = "Okay",
-                    isCancelable = true
-                ) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Is dialog cancelled? : ${!NoInternetDialogV2.isVisible}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
     }
 }
