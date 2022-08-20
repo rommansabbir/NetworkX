@@ -1,6 +1,7 @@
 package com.rommansabbir.networkobserverexample
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +11,6 @@ import com.rommansabbir.networkx.NetworkXProvider.isInternetConnectedFlow
 import com.rommansabbir.networkx.NetworkXProvider.lastKnownSpeedFlow
 import com.rommansabbir.networkx.dialog.NoInternetDialogV2
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
@@ -27,7 +27,17 @@ class MainActivity : AppCompatActivity() {
         //
         NetworkXProvider.isInternetConnectedLiveData.observe(this) {
             it?.let {
-                textView.text = "Internet connection status: $it"
+                NoInternetDialogV2.forceClose()
+                if (!it) {
+                    NoInternetDialogV2(
+                        activity = WeakReference(this@MainActivity),
+                        title = "No Internet Bro",
+                        message = "This is just a dummy message",
+                        buttonTitle = "Okay",
+                        isCancelable = false
+                    ) {
+                    }
+                }
             }
         }
 
@@ -53,23 +63,6 @@ class MainActivity : AppCompatActivity() {
                 isInternetConnectedFlow.collect {
                     lifecycleScope.launch {
                         textView.text = "Internet connection status: $it"
-                        if (!it){
-                            if (!NoInternetDialogV2.isVisible) {
-                                NoInternetDialogV2(
-                                    activity = WeakReference(this@MainActivity),
-                                    title = "No Internet Bro",
-                                    message = "This is just a dummy message",
-                                    buttonTitle = "Okay",
-                                    isCancelable = false
-                                ) {
-                                    Toast.makeText(
-                                        this@MainActivity,
-                                        "Is dialog cancelled? : ${!NoInternetDialogV2.isVisible}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        }
                     }
                 }
             } catch (e: Exception) {
@@ -77,5 +70,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        button.setOnClickListener {
+            NoInternetDialogV2.forceClose()
+            startActivity(Intent(this@MainActivity, DummyActivity::class.java))
+        }
     }
+
 }
