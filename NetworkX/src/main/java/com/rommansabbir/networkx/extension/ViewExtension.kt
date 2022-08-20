@@ -23,13 +23,14 @@ inline fun <V : ViewDataBinding> getDialogInstance(
     layoutId: Int,
     @StyleRes customStyle: Int? = null,
     setCancelable: Boolean = false,
-    crossinline onSuccess: (Dialog, V) -> Unit
-) {
+    crossinline onSuccess: (V) -> Unit
+): Dialog {
     val layout = DataBindingUtil.inflate<V>(LayoutInflater.from(activity), layoutId, null, false)
     val dialog = if (customStyle == null) Dialog(activity) else Dialog(activity, customStyle)
     dialog.setContentView(layout.root)
     dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     dialog.setCanceledOnTouchOutside(setCancelable)
     dialog.setCancelable(setCancelable)
-    onSuccess.invoke(dialog, layout)
+    onSuccess.invoke(layout)
+    return dialog
 }
