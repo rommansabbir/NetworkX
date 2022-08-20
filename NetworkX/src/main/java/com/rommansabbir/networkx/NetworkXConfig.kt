@@ -12,6 +12,7 @@ import com.rommansabbir.networkx.exceptions.NetworkXNotInitializedException
  * @param application, [Application] reference to initialize NetworkX properly
  * @param enableSpeedMeter, determine if to enable monitoring network speed
  */
+@Deprecated("Use new SmartConfig.")
 class NetworkXConfig private constructor(
     val application: Application,
     val enableSpeedMeter: Boolean

@@ -1,10 +1,7 @@
 package com.rommansabbir.networkx.extension
 
 import androidx.lifecycle.LiveData
-import com.rommansabbir.networkx.LastKnownSpeed
-import com.rommansabbir.networkx.NetworkSpeedType
-import com.rommansabbir.networkx.NetworkXConfig
-import com.rommansabbir.networkx.NetworkXProvider
+import com.rommansabbir.networkx.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,4 +53,22 @@ internal val getDefaultIOScope by lazy { CoroutineScope(Dispatchers.IO) }
  *
  * @param config [NetworkXConfig].
  */
+
+@Deprecated(
+    "Use new extension API", replaceWith = ReplaceWith(
+        "smartEnableNetworkX(SmartConfig(application, true, NetworkXLifecycle.Application))",
+        imports = arrayOf(
+            "com.rommansabbir.networkx.extension.smartEnableNetworkX",
+            "com.rommansabbir.networkx.SmartConfig",
+            "com.rommansabbir.networkx.NetworkXLifecycle"
+        )
+    )
+)
 fun enableNetworkX(config: NetworkXConfig) = NetworkXProvider.enable(config)
+
+/**
+ * Initialize [NetworkXProvider].
+ *
+ * @param config [SmartConfig].
+ */
+fun smartEnableNetworkX(config: SmartConfig) = NetworkXProvider.enable(config)

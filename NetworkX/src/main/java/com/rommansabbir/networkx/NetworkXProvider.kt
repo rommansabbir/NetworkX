@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.rommansabbir.networkx.extension.getDefaultIOScope
 import com.rommansabbir.networkx.extension.getDefaultLastKnownSpeed
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -106,7 +105,13 @@ object NetworkXProvider {
             if (manager != null) {
                 return
             }
-            manager = NetworkXManager(application, enableSpeedMeter)
+            manager = NetworkXManager(
+                SmartConfig(
+                    application,
+                    enableSpeedMeter,
+                    NetworkXLifecycle.Application
+                )
+            )
         } catch (e: Exception) {
             throw e
         }
@@ -119,12 +124,46 @@ object NetworkXProvider {
      *
      * @param config [NetworkXConfig] reference.
      */
+    @Deprecated(
+        "Use new SmartConfig.",
+        replaceWith = ReplaceWith(
+            "NetworkXProvider.enable(SmartConfig(application, true, NetworkXLifecycle.Application))",
+            imports = arrayOf(
+                "com.rommansabbir.networkx.SmartConfig",
+                "com.rommansabbir.networkx.NetworkXLifecycle"
+            )
+        )
+    )
     fun enable(config: NetworkXConfig) {
         try {
             if (manager != null) {
                 return
             }
-            manager = NetworkXManager(config.application, config.enableSpeedMeter)
+            manager = NetworkXManager(
+                SmartConfig(
+                    config.application,
+                    config.enableSpeedMeter,
+                    NetworkXLifecycle.Application
+                )
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    /**
+     * Main entry point for the client.
+     * First check for [NetworkXManager] instance, if the status is null then initialize it properly
+     * else ignore the initialization.
+     *
+     * @param config [SmartConfig] reference.
+     */
+    fun enable(config: SmartConfig) {
+        try {
+            if (manager != null) {
+                return
+            }
+            manager = NetworkXManager(config)
         } catch (e: Exception) {
             throw e
         }

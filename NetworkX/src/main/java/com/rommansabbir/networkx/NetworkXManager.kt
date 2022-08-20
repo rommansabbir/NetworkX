@@ -14,27 +14,20 @@ import android.util.Log
 import java.net.InetAddress
 
 internal class NetworkXManager constructor(
-    private val application: Application,
-    private val isSpeedMeterEnabled: Boolean
+    private val smartConfig: SmartConfig
 ) {
     // Callback for activity lifecycle for this specific application
     private val activityCallback = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            try {
-                getConnectivityManager(application).apply {
-                    registerNetworkCallback(
-                        getNetworkRequest(),
-                        getNetworkCallBack
-                    )
-                    if (isSpeedMeterEnabled) {
-                        enabledSpeedMeter()
-                        logThis("onActivityCreated: speed meter enabled")
-                    }
-                    logThis("onActivityCreated: listener registered")
+            when (smartConfig.lifecycle) {
+                NetworkXLifecycle.Activity -> {
+                    initObservation()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                logThis(e.message)
+                NetworkXLifecycle.Application -> {
+                    if (!isObservationRunning) {
+                        initObservation()
+                    }
+                }
             }
         }
 
@@ -49,19 +42,58 @@ internal class NetworkXManager constructor(
         override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
 
         override fun onActivityDestroyed(activity: Activity) {
-            try {
-                getConnectivityManager(application).unregisterNetworkCallback(getNetworkCallBack)
-                logThis("onActivityDestroyed: listener unregistered")
-                if (isSpeedMeterEnabled) {
-                    disableSpeedMeter()
-                    logThis("onActivityDestroyed: speed meter disabled")
+            when (smartConfig.lifecycle) {
+                NetworkXLifecycle.Activity -> {
+                    stopObservation()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                logThis(e.message)
+                NetworkXLifecycle.Application -> {
+                    logThis("stopObservation(): can't stop observation since the lifecycle is set to Application")
+                }
             }
         }
 
+    }
+
+    private fun stopObservation() {
+        isObservationRunning = try {
+            getConnectivityManager(smartConfig.application).unregisterNetworkCallback(
+                getNetworkCallBack
+            )
+            logThis("stopObservation(): listener unregistered")
+            if (smartConfig.enableSpeedMeter) {
+                disableSpeedMeter()
+                logThis("stopObservation(): speed meter disabled")
+            }
+            false
+        } catch (e: Exception) {
+            e.printStackTrace()
+            logThis(e.message)
+            false
+        }
+    }
+
+    @Volatile
+    private var isObservationRunning: Boolean = false
+
+    private fun initObservation() {
+        try {
+            getConnectivityManager(smartConfig.application).apply {
+                registerNetworkCallback(
+                    getNetworkRequest(),
+                    getNetworkCallBack
+                )
+                if (smartConfig.enableSpeedMeter) {
+                    enabledSpeedMeter()
+                    logThis("initObservation(): speed meter enabled")
+                }
+                logThis("initObservation(): listener registered")
+                isObservationRunning = true
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            logThis(e.message)
+            isObservationRunning = false
+        }
     }
 
     @Volatile
@@ -70,8 +102,8 @@ internal class NetworkXManager constructor(
     // Initialize the Manager
     init {
         try {
-            getConnectivityManager(application)
-            application.registerActivityLifecycleCallbacks(activityCallback)
+            getConnectivityManager(smartConfig.application)
+            smartConfig.application.registerActivityLifecycleCallbacks(activityCallback)
             trafficUtils = TrafficUtils()
         } catch (e: Exception) {
             e.printStackTrace()
