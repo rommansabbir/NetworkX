@@ -2,6 +2,8 @@ package com.rommansabbir.networkx.dialog
 
 import android.app.Activity
 import android.app.Dialog
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import com.rommansabbir.networkx.R
 import com.rommansabbir.networkx.databinding.ContentDialogNoInternetBinding
 import com.rommansabbir.networkx.extension.getDialogInstance
@@ -13,12 +15,13 @@ class NoInternetDialogV2 constructor(
     private val message: String,
     private val buttonTitle: String,
     private val isCancelable: Boolean,
+    @DrawableRes private val drawable: Int? = null,
     private val callback: () -> Unit
 ) {
     init {
-        activity.get()?.let {
+        activity.get()?.let { activity ->
             getDialogInstance<ContentDialogNoInternetBinding>(
-                it,
+                activity,
                 R.layout.content_dialog_no_internet,
                 R.style.my_dialog,
                 isCancelable
@@ -27,6 +30,14 @@ class NoInternetDialogV2 constructor(
                 binding.cdniBtnRetry.text = buttonTitle
                 binding.cdniTvTitle.text = title
                 binding.cdniTvMessage.text = message
+                drawable?.let {
+                    binding.imageView.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            activity,
+                            drawable
+                        )
+                    )
+                }
                 NoInternetDialogV2.dialog?.setOnDismissListener {
                     NoInternetDialogV2.dialog = null
                 }
