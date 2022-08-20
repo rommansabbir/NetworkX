@@ -20,13 +20,12 @@ class NoInternetDialogV2 constructor(
 ) {
     init {
         activity.get()?.let { activity ->
-            getDialogInstance<ContentDialogNoInternetBinding>(
+            dialog = getDialogInstance<ContentDialogNoInternetBinding>(
                 activity,
                 R.layout.content_dialog_no_internet,
                 R.style.my_dialog,
                 isCancelable
-            ) { dialog, binding ->
-                NoInternetDialogV2.dialog = dialog
+            ) { binding ->
                 binding.cdniBtnRetry.text = buttonTitle
                 binding.cdniTvTitle.text = title
                 binding.cdniTvMessage.text = message
@@ -38,17 +37,27 @@ class NoInternetDialogV2 constructor(
                         )
                     )
                 }
-                NoInternetDialogV2.dialog?.setOnDismissListener {
-                    NoInternetDialogV2.dialog = null
-                }
-                binding.cdniBtnRetry.setOnClickListener { callback.invoke();NoInternetDialogV2.dialog?.cancel() }
-                NoInternetDialogV2.dialog?.show()
+
+                binding.cdniBtnRetry.setOnClickListener { callback.invoke(); forceClose() }
             }
+            dialog?.setOnDismissListener {
+                dialog = null
+            }
+            dialog?.show()
         } ?: kotlin.run { dialog = null }
     }
 
     companion object {
+        @Volatile
         private var dialog: Dialog? = null
+
         val isVisible: Boolean = dialog != null && dialog!!.isShowing
+        fun forceClose() {
+            try {
+                dialog?.cancel()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 }
