@@ -1,8 +1,6 @@
 [![Release](https://jitpack.io/v/jitpack/android-example.svg)](https://jitpack.io/#rommansabbir/NetworkX)
 
-# NetworkX
-
-An easy & handy library to monitor device internet connection status.
+![NetworkX](https://user-images.githubusercontent.com/25950083/185731068-480fd969-f18d-439c-938a-6285a50c2be2.png)
 
 ---
 
