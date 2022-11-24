@@ -4,4 +4,5 @@
     <string name="retry">Retry</string>
     <string name="device_is_not_connected_to_the_internet">Device is not connected to the internet!</string>
     <string name="no_internet">No internet!</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>

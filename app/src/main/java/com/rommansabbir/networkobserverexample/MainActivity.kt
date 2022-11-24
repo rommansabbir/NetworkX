@@ -10,6 +10,7 @@ import com.rommansabbir.networkx.NetworkXProvider
 import com.rommansabbir.networkx.NetworkXProvider.isInternetConnectedFlow
 import com.rommansabbir.networkx.NetworkXProvider.lastKnownSpeedFlow
 import com.rommansabbir.networkx.dialog.NoInternetDialogV2
+import com.rommansabbir.networkx.extension.isInternetConnected
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

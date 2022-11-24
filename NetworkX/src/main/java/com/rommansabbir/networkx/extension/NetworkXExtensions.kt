@@ -9,6 +9,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 /**
  * Return if internet is connected or not.
  */
+@Deprecated(
+    "Don't use this extension variable",
+    level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith(
+        "NetworkXProvider.isInternetConnected",
+        imports = arrayOf("com.rommansabbir.networkx.NetworkXProvider.isInternetConnected")
+    )
+)
 val isInternetConnected: Boolean = NetworkXProvider.isInternetConnected
 
 /**
