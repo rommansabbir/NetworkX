@@ -14,16 +14,16 @@
      <a href="https://jitpack.io/#rommansabbir/NetworkX"><img alt="JitPack" src="https://img.shields.io/badge/JitPack-Yes-green.svg?style=flat" height="20"/></a>
 </p>
 
-<h1 align="center"> ⚡ Latest Version: 4.1.0 | Change Logs 🔰</h1>
+<h1 align="center"> ⚡ Latest Version: 4.2.0 | Change Logs 🔰</h1>
 
-- NetworkX now works with both __Activity__ or __Application__ Scope (NetworkX lifecycle is bounded to `NetworkXLifecycle.Activity` or `NetworkXLifecycle.Application`)
-- Introduced `SmartConfig` to replace old config [`NetworkXConfig` has been deprecated]
-- New __API__ to initialize `NetworkX`, enabled smart refactoring to replace old __API__ with new one
-- New __API__ [`NoInternetDialogV2.forceClose()`] added to close `Dialog` forcefully
-- Added support for custom _Drawable_ to be shown in `NoInternetDialogV2`
+- NetworkX now works with both __Activity__ or __Application__ Scope (NetworkX lifecycle is bounded to `NetworkXLifecycle.Activity` or `NetworkXLifecycle.Application`).
+- Introduced `SmartConfig` to replace old config [`NetworkXConfig` has been deprecated].
+- New __API__ to initialize `NetworkX`, enabled smart refactoring to replace old __API__ with new one.
+- New __API__ [`NoInternetDialogV2.forceClose()`] added to close `Dialog` forcefully.
+- Added support for custom _Drawable_ to be shown in `NoInternetDialogV2`.
+- Added support for _No Internet Dialog_ `JetPack Compose` version.
 - Several __Classes__, __APIs__ has been deprecated.
-- Removed unused classes/packages
-- Colorful Documentation 😂
+- Removed unused classes/packages.
 
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#getting-started-quick)
 
@@ -47,7 +47,7 @@ Add the dependency.
 
 ```gradle
     dependencies {
-            implementation 'com.github.rommansabbir:NetworkX:4.1.0'
+            implementation 'com.github.rommansabbir:NetworkX:4.2.0'
     }
 ```
 
@@ -110,6 +110,12 @@ Initialize `NetworkX` from your `Application.onCreate()`
 
 ```kotlin
     NoInternetDialogV2.isVisible
+```
+
+- Show Dialog (Compose Version)
+
+```kotlin
+    val ui = defaultNoInternetUI()
 ```
 
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#getting-started-quick)

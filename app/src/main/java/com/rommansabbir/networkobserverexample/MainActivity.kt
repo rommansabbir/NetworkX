@@ -10,6 +10,7 @@ import com.rommansabbir.networkx.NetworkXProvider
 import com.rommansabbir.networkx.NetworkXProvider.isInternetConnectedFlow
 import com.rommansabbir.networkx.NetworkXProvider.lastKnownSpeedFlow
 import com.rommansabbir.networkx.dialog.NoInternetDialogV2
+import com.rommansabbir.networkx.extension.isInternetConnected
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -26,25 +27,8 @@ class MainActivity : AppCompatActivity() {
 
         //
         NetworkXProvider.isInternetConnectedLiveData.observe(this) {
-            it?.let {
-                NoInternetDialogV2.forceClose()
-                if (!it) {
-                    NoInternetDialogV2(
-                        activity = WeakReference(this@MainActivity),
-                        title = "No Internet Bro",
-                        message = "This is just a dummy message",
-                        buttonTitle = "Okay",
-                        isCancelable = false
-                    ) {
-                    }
-                }
-            }
+            textView.text = "Internet connection status: $it"
         }
-
-/*        NetworkXProvider.lastKnownSpeed.let {
-            textView2.text =
-                "Last Known Speed: Speed - ${it.speed} | Type - ${it.networkTypeNetwork} | Simplified Speed - ${it.simplifiedSpeed}"
-        }*/
 
         lifecycleScope.launchWhenCreated {
             try {
