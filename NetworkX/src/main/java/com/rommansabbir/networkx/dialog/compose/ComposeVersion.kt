@@ -24,7 +24,7 @@ import com.rommansabbir.networkx.ui.theme.Green
 
 
 @Composable
-fun APSingleActionDialog(
+fun NoInternetDialogCompose(
     dialogState: Boolean = false,
     ui: NoInternetUI,
     onCancelled: () -> Unit = {},

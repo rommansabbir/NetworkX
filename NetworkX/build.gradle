@@ -5,7 +5,7 @@ plugins {
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 group = 'rommansabbir'
-version '3.4.1'
+version '4.2.0'
 
 android {
     compileSdkVersion 31
@@ -84,7 +84,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.rommansabbir'
                 artifactId = 'NetworkX'
-                version = '3.4.1'
+                version = '4.2.0'
             }
         }
     }
