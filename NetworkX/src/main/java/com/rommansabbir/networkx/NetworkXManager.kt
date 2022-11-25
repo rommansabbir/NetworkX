@@ -167,13 +167,12 @@ internal class NetworkXManager constructor(
     private val getNetworkCallBack = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
-            /*NetworkXProvider.setConnection(true)*/
             updateInternetConnectionStatus()
         }
 
         override fun onLost(network: Network) {
             super.onLost(network)
-            NetworkXProvider.setConnection(false)
+            updateInternetConnectionStatus()
         }
     }
 
