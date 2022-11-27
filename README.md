@@ -116,6 +116,12 @@ Initialize `NetworkX` from your `Application.onCreate()`
 
 ```kotlin
     val ui = defaultNoInternetUI()
+    NoInternetDialogCompose(
+      true,
+      ui,
+      { /*Dialog Cancelled*/ },
+      { /*Dialog closed by user, by pressing action button*/ }
+    )
 ```
 
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#getting-started-quick)
